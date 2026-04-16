@@ -50,6 +50,10 @@
   }
 }
 
+html {
+  width: 100%;
+}
+
 *,
 *::before,
 *::after {
@@ -58,8 +62,14 @@
   font-weight: normal;
 }
 
+#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
 body {
   min-height: 100vh;
+  width: 100%;
   color: var(--color-text);
   background: var(--color-background);
   transition:

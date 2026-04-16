@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import Tickets from './Tickets.vue'
+
+const tela = ref<'formulario' | 'lista'>('formulario')
 
 // estado dos campos do formulário
 const name = ref('')
@@ -25,7 +28,6 @@ function clearFieldError(field: FieldKey) {
   formErrors.value[field] = ''
 }
 
-
 // valida o formulário
 function validateForm() {
   const emailTrim = email.value.trim()
@@ -49,7 +51,6 @@ async function onSubmit(e: Event) {
   if (hasErrors) return
   await enviarChamado()
 }
-
 
 // monta o payload para o Octadesk
 function montarPayloadOctadesk() {
@@ -134,7 +135,6 @@ const enviarChamado = async () => {
   }
 }
 
-
 // limpa os campos do formulário
 function limparCampos() {
   name.value = ''
@@ -150,7 +150,6 @@ function limparCampos() {
     mensagem: '',
   }
 }
-
 
 // função para anexar arquivo
 const openFileDialog = () => {
@@ -174,19 +173,21 @@ const openFileDialog = () => {
   }
   input.click()
 }
-
-
 </script>
 
-
-
 <template>
-  <div 
-    class="min-h-screen bg-[#F8F9FA] font-sans text-[#1A202C] antialiased"
+  <Tickets v-if="tela === 'lista'" @voltar="tela = 'formulario'" />
+  <div
+    v-else
+    class="min-h-screen w-full bg-[#F8F9FA] font-sans text-[#1A202C] antialiased"
   >
-    <div class="mx-auto max-w-[1120px] px-8 py-12 pb-16 max-md:px-6">
-      <div class="flex items-start gap-12 max-lg:flex-col max-lg:gap-8">
-        <div class="min-w-0 flex-1">
+    <div
+      class="mx-auto w-full max-w-[min(100%,1280px)] px-6 py-12 pb-16 sm:px-8 lg:px-10"
+    >
+      <div
+        class="grid w-full grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-12 lg:items-stretch"
+      >
+        <div class="min-w-0">
           <h1 class="mb-2 text-[28px] font-bold tracking-tight text-[#1A202C]">
             Ajuda
           </h1>
@@ -307,7 +308,6 @@ const openFileDialog = () => {
                 >Mensagem</label
               >
               <div class="relative">
-                
                 <textarea
                   id="mensagem"
                   v-model="mensagem"
@@ -317,15 +317,7 @@ const openFileDialog = () => {
                   class="min-h-[180px] w-full resize-y rounded-lg border border-[#E2E8F0] bg-white px-3.5 py-3 pb-11 text-[15px] leading-relaxed text-[#1A202C] placeholder:text-[#A0AEC0] outline-none transition-colors focus:border-[#CBD5E0]"
                   :class="formErrors.mensagem ? 'border-red-400' : ''"
                   @input="clearFieldError('mensagem')"
-              
                 />
-                <button
-                  type="button"
-                  class="absolute bottom-3 left-3 flex size-9 items-center justify-center rounded-md text-[#A0AEC0] hover:bg-black/[0.04] hover:text-[#718096]"
-                  aria-label="Anexar arquivo"
-                  title="Anexar arquivo"
-                  @click="openFileDialog"
-                >
                 <p
                   v-if="formErrors.mensagem"
                   role="alert"
@@ -333,8 +325,13 @@ const openFileDialog = () => {
                 >
                   {{ formErrors.mensagem }}
                 </p>
-                
-                
+                <button
+                  type="button"
+                  class="absolute bottom-3 left-3 flex size-9 items-center justify-center rounded-md text-[#A0AEC0] hover:bg-black/[0.04] hover:text-[#718096]"
+                  aria-label="Anexar arquivo"
+                  title="Anexar arquivo"
+                  @click="openFileDialog"
+                >
                   <svg
                     width="20"
                     height="20"
@@ -353,6 +350,7 @@ const openFileDialog = () => {
                 </button>
               </div>
             </div>
+            <br />
 
             <button
               type="submit"
@@ -363,15 +361,13 @@ const openFileDialog = () => {
           </form>
         </div>
 
-        <aside class="w-[260px] shrink-0 pt-1 max-lg:w-full">
+        <aside class="flex w-full min-w-0 flex-col pt-1 lg:w-[260px]">
           <h2 class="mb-5 text-[17px] font-bold text-[#1A202C]">
             Outros canais
           </h2>
           <div
             class="mb-4 flex items-center gap-3 text-sm leading-snug text-[#718096]"
           >
-
-          
             <svg
               class="shrink-0 text-[#A0AEC0]"
               width="22"
@@ -404,11 +400,20 @@ const openFileDialog = () => {
               stroke-linejoin="round"
               aria-hidden="true"
             >
-
               <rect x="2" y="4" width="20" height="16" rx="2" />
               <path d="m22 7-10 6L2 7" />
             </svg>
             <span>suporte@vocaretech.com.br</span>
+          </div>
+
+          <div class="mt-auto flex justify-end pt-10 max-lg:mt-8 max-lg:w-full max-lg:pt-6">
+            <button
+              type="button"
+              class="max-w-full rounded-lg border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm font-semibold leading-snug text-[#1A202C] transition-colors hover:bg-[#F7FAFC] max-lg:w-full max-lg:text-center"
+              @click="tela = 'lista'"
+            >
+              Ver chamados no Octadesk
+            </button>
           </div>
         </aside>
       </div>
